@@ -2,32 +2,30 @@
 
 void driveTo(double target, double maxSpeed, double timeout) {
 	// PID control variables
-	double kP = 0.5;
-	double kI = 0;
-	double kD = 0;
-	double integral = 0;
-	double previousError = 0;
-
-	double distanceTravelled = 0;
+	double currentPos = 0;
 	double startTime = pros::millis();
 
-	while (pros::millis() - startTime < timeout) {
-		// distanceTravelled = # of rotations * (3.25 * M_PI));
+	double deadband = 2; // acceptable error range
+	bool settled = false; 
 
-		double error = target - distanceTravelled;
-		integral += error;
-		double derivative = error - previousError;
+	while (pros::millis() - startTime < timeout && !settled) {
+		// currentPos = # of rotations * (3.25 * M_PI));
 
-		double output = kP * error + kI * integral + kD * derivative;
+		double error = target - currentPos;
+		double output = lateralPID.update(error);
 		output = std::clamp(output, -maxSpeed, maxSpeed);
 
 		left_mg.move_velocity(output);
 		right_mg.move_velocity(output);
 
-		previousError = error;
+		if (std::fabs(error) < deadband) {
+			settled = true; // Robot is within acceptable range -> exit loop
+		}
+
 		pros::delay(20);
 	}
 
 	left_mg.brake();
 	right_mg.brake();
+	lateralPID.reset();
 }
