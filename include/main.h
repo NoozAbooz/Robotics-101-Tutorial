@@ -39,7 +39,7 @@
 /**
  * You should add more #includes here
  */
-//#include "okapi/api.hpp"
+#include "globals.hpp"
 
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
@@ -49,8 +49,8 @@
  * concurrently! The okapi namespace will export all symbols inside the pros
  * namespace.
  */
-// using namespace pros;
-// using namespace pros::literals;
+using namespace pros;
+using namespace pros::literals;
 // using namespace okapi;
 
 /**
@@ -75,14 +75,7 @@ void opcontrol(void);
  * You can add C++-only headers here
  */
 
-extern pros::Controller master;
-extern pros::MotorGroup left_mg;
-extern pros::MotorGroup right_mg;
-extern pros::Motor intake;
-extern pros::IMU inertial;
-
-extern void driveTo(double target, double maxSpeed, double timeout);
-extern void turnTo(double target, double maxSpeed, double timeout);
+#include "globals.hpp"
 
 #endif
 
